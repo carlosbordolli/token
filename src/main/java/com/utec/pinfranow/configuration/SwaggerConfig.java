@@ -34,7 +34,7 @@ import io.swagger.v3.oas.annotations.servers.Server;
                 ),
 				@Server (
                         description = "Railway",
-                        url = "htts://token-production-8078.up.railway.app"
+                        url = "https://token-production-8078.up.railway.app"
                 ),
 
         }
