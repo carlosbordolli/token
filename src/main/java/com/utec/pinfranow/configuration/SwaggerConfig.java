@@ -32,6 +32,10 @@ import io.swagger.v3.oas.annotations.servers.Server;
                         description = "Desarrollo",
                         url = "http://localhost:8080"
                 ),
+				@Server (
+                        description = "Railway",
+                        url = "htts://token-production-8078.up.railway.app"
+                ),
 
         }
 
