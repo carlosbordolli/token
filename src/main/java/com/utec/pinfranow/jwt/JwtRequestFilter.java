@@ -32,10 +32,14 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         String path = request.getServletPath();
 
+        // DEBUG: Ver qué ruta está pasando por el filtro
+        System.out.println("JwtRequestFilter interceptando: " + path);
+
         // Rutas públicas permitidas sin autenticación
         if (
             path.equals("/login.html") ||
             path.equals("/") ||
+            path.equals("/favicon.ico") ||
             path.startsWith("/api/auth/") ||
             path.startsWith("/swagger-ui/") ||
             path.startsWith("/v3/api-docs") ||
@@ -44,6 +48,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             path.startsWith("/js/") ||
             path.startsWith("/images/")
         ) {
+            System.out.println("Ruta pública permitida, no se aplica filtro JWT.");
             filterChain.doFilter(request, response);
             return;
         }
