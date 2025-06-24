@@ -32,8 +32,18 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
         String path = request.getServletPath();
 
-        // Ignorar endpoints públicos
-        if ("/api/auth/login".equals(path) || path.startsWith("/api/auth/")) {
+        // Rutas públicas permitidas sin autenticación
+        if (
+            path.equals("/login.html") ||
+            path.equals("/") ||
+            path.startsWith("/api/auth/") ||
+            path.startsWith("/swagger-ui/") ||
+            path.startsWith("/v3/api-docs") ||
+            path.startsWith("/actuator") ||
+            path.startsWith("/css/") ||
+            path.startsWith("/js/") ||
+            path.startsWith("/images/")
+        ) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -52,14 +62,14 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             UserDetails userDetails = this.customUsuarioDetailsService.loadUserByUsername(username);
 
             if (jwtTokenUtil.validateToken(jwt, userDetails)) {
-                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
+                UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(
                                 userDetails, null, userDetails.getAuthorities());
-                usernamePasswordAuthenticationToken
-                        .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         }
+
         filterChain.doFilter(request, response);
     }
 }
