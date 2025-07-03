@@ -10,7 +10,10 @@ import java.util.List;
 
 @Entity
 @Table(name = "actividades")
-@Data @Builder @NoArgsConstructor @AllArgsConstructor
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Actividad {
 
     @Id
@@ -19,7 +22,8 @@ public class Actividad {
     private Integer id;
 
     @Column(name = "actividad_nom", length = 100, nullable = false, unique = true)
-    @NotBlank @Size(max = 100)
+    @NotBlank
+    @Size(max = 100)
     private String nombre;
 
     @Column(name = "acrividad_descripcion", length = 255)
@@ -45,6 +49,12 @@ public class Actividad {
     private Integer costo;
 
     private LocalDate fecInscripcion;
+
+    @Column(name = "fec_apertura_inscripcion")
+    private LocalDate fecAperturaInscripcion;
+
+    @Column(name = "fec_cierre_inscripcion")
+    private LocalDate fecCierreInscripcion;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "tipo_pago", length = 10, nullable = false)

@@ -32,7 +32,7 @@ import io.swagger.v3.oas.annotations.servers.Server;
                         description = "Desarrollo",
                         url = "http://localhost:8080"
                 ),
-				@Server (
+                @Server (
                         description = "Railway",
                         url = "https://token-production-8078.up.railway.app"
                 ),
@@ -42,3 +42,4 @@ import io.swagger.v3.oas.annotations.servers.Server;
 )
 public class SwaggerConfig {
 }
+

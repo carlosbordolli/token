@@ -22,13 +22,13 @@ public class EspacioDTO {
     @Schema(description = "Capacidad del espacio", example = "15")
     private Integer capacidad;
 
-    @Schema(description = "Precio del espacio para usuarios socios", example = "520,10")
+    @Schema(description = "Precio del espacio para usuarios socios", example = "500")
     private BigDecimal precioSocio;
 
-    @Schema(description = "Precio del espacio para usuarios no socios", example = "850,75")
+    @Schema(description = "Precio del espacio para usuarios no socios", example = "850")
     private BigDecimal precioNoSocio;
 
-    @Schema(description = "Fecha de vigencia del precio actual", example = "31/12/2024")
+    @Schema(description = "Fecha de vigencia del precio actual", example = "2025-12-31")
     private LocalDate vigenciaPrecios;
 
     @Schema(description = "Observación del espacio", example = "Este espacio es de uso recreativo.")

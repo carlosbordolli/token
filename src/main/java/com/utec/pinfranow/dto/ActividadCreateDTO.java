@@ -18,6 +18,8 @@ public class ActividadCreateDTO {
     private Boolean inscripcion;
     private Integer costo;
     private LocalDate fecInscripcion;
+    private LocalDate fecAperturaInscripcion;
+    private LocalDate fecCierreInscripcion;
     private String tipoPago;
     private String observaciones;
     private String estado;

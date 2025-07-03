@@ -1,5 +1,7 @@
 package com.utec.pinfranow.controller;
 
+import com.utec.pinfranow.dto.FiltroReporteActividadDTO;
+import com.utec.pinfranow.dto.FiltroReporteTipoActividadDTO;
 import com.utec.pinfranow.dto.InscripcionActividadDTO;
 import com.utec.pinfranow.mapper.InscripcionActividadMapper;
 import com.utec.pinfranow.model.Actividad;
@@ -21,6 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -71,8 +74,17 @@ public class InscripcionActividadController {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuario no encontrado"));
 
         // Buscar Actividad por id
-        Actividad actividad = actividadService.findById(Integer.valueOf(dto.getIdActividad()))
+        Actividad actividad = actividadService.findById(dto.getIdActividad())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Actividad no encontrada"));
+
+        // Validar período de inscripción
+        LocalDate hoy = LocalDate.now();
+        if (actividad.getFecAperturaInscripcion() != null && actividad.getFecCierreInscripcion() != null) {
+            if (hoy.isBefore(actividad.getFecAperturaInscripcion()) || hoy.isAfter(actividad.getFecCierreInscripcion())) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "El período de inscripción para esta actividad no está abierto actualmente.");
+            }
+        }
 
         // Mapear entidad con los 3 argumentos requeridos
         InscripcionActividad entity = inscripcionActividadMapper.toEntity(dto, usuario, actividad);
@@ -100,6 +112,64 @@ public class InscripcionActividadController {
         }
         inscripcionActividadService.deleteById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "Cancelar una inscripción", security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponse(responseCode = "200", description = "Inscripción cancelada correctamente")
+    @ApiResponse(responseCode = "404", description = "Inscripción no encontrada")
+    @PutMapping("/cancelar")
+    public ResponseEntity<String> cancelarInscripcion(@RequestBody InscripcionActividadDTO dto) {
+        InscripcionActividadId id = new InscripcionActividadId(dto.getIdUsuario(), dto.getIdActividad());
+        boolean resultado = inscripcionActividadService.cancelarInscripcion(id);
+
+        if (resultado) {
+            return ResponseEntity.ok("Inscripción cancelada correctamente.");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se encontró la inscripción.");
+        }
+    }
+
+    @Operation(
+            summary = "Reporte de inscripciones/cancelaciones por actividades y rango de fechas",
+            description = "Permite filtrar por fechas, tipo de movimiento (inscripción, cancelación o ambas) y actividades",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Reporte generado correctamente"),
+    })
+    @PostMapping("/reporte/actividades")
+    public ResponseEntity<List<InscripcionActividadDTO>> obtenerReportePorActividades(
+            @RequestBody FiltroReporteActividadDTO filtro) {
+
+        List<InscripcionActividad> lista = inscripcionActividadService.obtenerReportePorActividades(filtro);
+
+        List<InscripcionActividadDTO> resultado = lista.stream()
+                .map(inscripcionActividadMapper::toDto)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(resultado);
+    }
+
+    @Operation(
+            summary = "Reporte de inscripciones/cancelaciones por TIPO de actividad y fechas",
+            description = "Permite filtrar por fechas, tipo de movimiento (inscripción, cancelación o ambas) y tipos de actividad",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Reporte generado correctamente"),
+            @ApiResponse(responseCode = "400", description = "Parámetros inválidos")
+    })
+    @PostMapping("/reporte/tipo-actividad")
+    public ResponseEntity<List<InscripcionActividadDTO>> obtenerReportePorTipoActividad(
+            @RequestBody FiltroReporteTipoActividadDTO filtro) {
+
+        List<InscripcionActividad> lista = inscripcionActividadService.obtenerReportePorTipoActividad(filtro);
+
+        List<InscripcionActividadDTO> resultado = lista.stream()
+                .map(inscripcionActividadMapper::toDto)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(resultado);
     }
 
 }

@@ -1,5 +1,6 @@
 package com.utec.pinfranow.mapper;
 
+import com.utec.pinfranow.dto.ReservaEspacioCreateDTO;
 import com.utec.pinfranow.dto.ReservaEspacioDTO;
 import com.utec.pinfranow.model.*;
 import org.springframework.stereotype.Component;
@@ -51,4 +52,25 @@ public class ReservaEspacioMapper {
                 .espacio(espacio)
                 .build();
     }
+
+    public static ReservaEspacio toEntity(ReservaEspacioCreateDTO dto, Usuario usuario, Espacio espacio) {
+        return ReservaEspacio.builder()
+                .fecReservaActividad(dto.getFecReservaActividad())
+                .horaReservaActividad(dto.getHoraReservaActividad())
+                .duracion(dto.getDuracion())
+                .cantidadPersonas(dto.getCantidadPersonas())
+                .fechaVtoSenia(dto.getFechaVtoSenia())
+                .costoActividad(dto.getCostoActividad())
+                .fecPagoSenia(dto.getFecPagoSenia())
+                .importePagado(dto.getImportePagado())
+                .importeAPagar(dto.getImporteAPagar())
+                .saldoPendiente(dto.getSaldoPendiente())
+                .fecConfReserva(dto.getFecConfReserva())
+                .horaConfReserva(dto.getHoraConfReserva())
+                .resCancelada(dto.getResCancelada())
+                .usuario(usuario)
+                .espacio(espacio)
+                .build();
+    }
+
 }

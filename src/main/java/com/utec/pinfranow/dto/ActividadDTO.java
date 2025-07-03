@@ -2,6 +2,7 @@ package com.utec.pinfranow.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -9,29 +10,28 @@ import java.time.LocalTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-
 @Schema(name = "Actividad DTO", description = "Representa una actividad dentro del sistema")
 public class ActividadDTO {
 
     @Schema(description = "Identificador interno de la actividad", example = "1", accessMode = Schema.AccessMode.READ_ONLY)
     private Integer id;
 
-    @Schema(description = "Nombre de la actividad", example = "Fisioterapia")
+    @Schema(description = "Nombre de la actividad", example = "Clase de baile")
     private String nombre;
 
-    @Schema(description = "Decripción de la actividad", example = "Disciplina de la salud que se enfoca en el desarrollo, conservación y restauración del bienestar físico de las personas a través de tratamientos terapéuticos")
+    @Schema(description = "Decripción de la actividad", example = "Se realizan bailes recreacionales")
     private String descripcion;
 
-    @Schema(description = "Objetivo de la actividad", example = "Prevenir, tratar y rehabilitar diversas patologías y lesiones")
+    @Schema(description = "Objetivo de la actividad", example = "Actividad social para disfrutar")
     private String objetivo;
 
-    @Schema(description = "Fecha de la actividad", example = "31/12/2024")
+    @Schema(description = "Fecha de la actividad", example = "2025-07-29")
     private LocalDate fecha;
 
-    @Schema(description = "Hora de la actividad", example = "19:00")
+    @Schema(description = "Hora de la actividad", example = "19:00:00")
     private LocalTime hora;
 
-    @Schema(description = "Duración de la actividad", example = "1:00")
+    @Schema(description = "Duración de la actividad", example = "01:00:00")
     private LocalTime duracion;
 
     @Schema(description = "Incripción a la actividad", example = "true")
@@ -40,13 +40,19 @@ public class ActividadDTO {
     @Schema(description = "Costo de la actividad", example = "500")
     private Integer costo;
 
-    @Schema(description = "Fecha de incripción a la actividad", example = "31/12/2024")
+    @Schema(description = "Fecha de inscripción a la actividad", example = "2025-06-29")
     private LocalDate fecInscripcion;
+
+    @Schema(description = "Fecha de apertura de inscripciones", example = "2025-06-29")
+    private LocalDate fecAperturaInscripcion;
+
+    @Schema(description = "Fecha de cierre de inscripciones", example = "2025-07-28")
+    private LocalDate fecCierreInscripcion;
 
     @Schema(description = "Tipo de pago de la actividad", example = "EFECTIVO")
     private String tipoPago;
 
-    @Schema(description = "Observaciones de la actividad", example = "No recomendado para pacientes que presenten ciertas condiciones agudas o graves que requieran atención médica inmediata")
+    @Schema(description = "Observaciones de la actividad", example = "No recomendado para pacientes autistas")
     private String observaciones;
 
     @Schema(description = "Estado de la actividad", example = "ACTIVO")
@@ -61,4 +67,3 @@ public class ActividadDTO {
     @Schema(description = "Identificador interno del espacio donde se realiza", example = "1")
     private Integer idEspacio;
 }
-

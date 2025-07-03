@@ -11,4 +11,7 @@ import java.util.List;
 public interface ReservaEspacioRepository extends JpaRepository<ReservaEspacio, Integer> {
 
     List<ReservaEspacio> findByEspacioIdAndFecReservaActividad(Integer idEspacio, LocalDate fecha);
+    List<ReservaEspacio> findByFecReservaActividadBetween(LocalDate desde, LocalDate hasta);
+    List<ReservaEspacio> findByEspacioId(Integer idEspacio);
+
 }

@@ -1,10 +1,16 @@
 package com.utec.pinfranow.mapper;
 
+import com.utec.pinfranow.dto.TelefonoDTO;
 import com.utec.pinfranow.dto.UsuarioCreateDTO;
 import com.utec.pinfranow.dto.UsuarioDTO;
 import com.utec.pinfranow.model.Perfil;
+import com.utec.pinfranow.model.Telefono;
 import com.utec.pinfranow.model.Usuario;
+import com.utec.pinfranow.model.ids.TelefonoId;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
+
 
 @Component
 public class UsuarioMapper {
@@ -27,6 +33,7 @@ public class UsuarioMapper {
                 .bis(usuario.getBis())
                 .codPostal(usuario.getCodPostal())
                 .idCiudad(usuario.getIdCiudad())
+                .id_rol(usuario.getIdRol())
                 .idPerfil(usuario.getPerfil() != null ? usuario.getPerfil().getIdPerfil() : null)
                 .build();
     }
@@ -48,7 +55,17 @@ public class UsuarioMapper {
                 .bis(dto.getBis())
                 .codPostal(dto.getCodPostal())
                 .idCiudad(dto.getIdCiudad())
+                .idRol(dto.getId_rol())
                 .perfil(Perfil.builder().idPerfil(dto.getIdPerfil()).build())
                 .build();
+    }
+    public List<Telefono> mapTelefonos(List<TelefonoDTO> dtoList, Usuario usuario) {
+        if (dtoList == null) return List.of();
+
+        return dtoList.stream()
+                .map(dto -> Telefono.builder()
+                        .id(new TelefonoId(dto.getNumero(), usuario))
+                        .build())
+                .toList();
     }
 }

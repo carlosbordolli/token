@@ -11,9 +11,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -40,6 +43,24 @@ public class ActividadController {
                 .map(actividadMapper::toDto)
                 .collect(Collectors.toList());
     }
+
+    @Operation(summary = "Listar las actividades con inscripción", security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponse(responseCode = "200", description = "Listado de actividades obtenido correctamente")
+    @GetMapping("/obtenerPorInscripcion")
+    public List<ActividadDTO> getActividadesConInscripcionConFiltro(
+            @RequestParam(required = false) String nombre,
+            @RequestParam(required = false) String tipoActividad,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha,
+            @RequestParam(required = false) Integer costo,
+            @RequestParam(defaultValue = "true") boolean activos
+    ){
+        return actividadService.findActividadByInscripcionFiltrada(
+                        nombre, tipoActividad, fecha, costo, activos
+                )
+                .stream().map(actividadMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
 
     @Operation(summary = "Obtener una actividad por su ID", security = @SecurityRequirement(name = "bearerAuth"))
     @ApiResponses({
@@ -69,7 +90,7 @@ public class ActividadController {
                 .orElseThrow(() -> new IllegalArgumentException("Espacio no encontrado"));
 
         Actividad actividad = ActividadMapper.toEntity(dto, tipo, aux, espacio);
-        Actividad nueva = actividadService.save(actividad);
+        Actividad nueva = actividadService.guardarActividad(actividad);
 
         return ResponseEntity.status(201).body(actividadMapper.toDto(nueva));
     }
@@ -95,8 +116,8 @@ public class ActividadController {
                 .orElseThrow(() -> new IllegalArgumentException("Espacio no encontrado"));
 
         Actividad actividad = ActividadMapper.toEntity(dto, tipo, aux, espacio);
-        actividad.setId(id); // Asegurarse que se actualiza el correcto
-        Actividad actualizada = actividadService.save(actividad);
+        actividad.setId(id);
+        Actividad actualizada = actividadService.guardarActividad(actividad);
 
         return ResponseEntity.ok(actividadMapper.toDto(actualizada));
     }
@@ -113,5 +134,35 @@ public class ActividadController {
         }
         actividadService.deleteById(id);
         return ResponseEntity.noContent().build();
+    }
+    @PutMapping("/cancelar/{id}")
+    @Operation(summary = "Dar de baja una actividad", security = @SecurityRequirement(name = "bearerAuth"))
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Actividad cancelada correctamente"),
+            @ApiResponse(responseCode = "400", description = "La actividad ya comenzó y no puede ser cancelada"),
+            @ApiResponse(responseCode = "404", description = "Actividad no encontrada")
+    })
+    public ResponseEntity<?> DarDeBajaActividad(@PathVariable Integer id) {
+        Optional<Actividad> actividadOpt = actividadService.findById(id);
+
+        if (actividadOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Actividad actividad = actividadOpt.get();
+
+        if (actividad.getFecha() != null && actividad.getHora() != null) {
+            LocalDateTime fechaYHoraActividad = LocalDateTime.of(actividad.getFecha(), actividad.getHora());
+
+            if (!fechaYHoraActividad.isAfter(LocalDateTime.now())) {
+                return ResponseEntity.badRequest()
+                        .body("La actividad ya comenzó o está en curso y no puede ser cancelada.");
+            }
+        }
+
+        actividad.setEstado(Estado.INACTIVO);
+        Actividad actualizada = actividadService.cancelarActividad(actividad.getId());
+
+        return ResponseEntity.ok(actividadMapper.toDto(actualizada));
     }
 }

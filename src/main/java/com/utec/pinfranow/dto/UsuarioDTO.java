@@ -2,6 +2,8 @@ package com.utec.pinfranow.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,6 +15,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @NoArgsConstructor // Constructor sin parámetros
@@ -22,25 +25,25 @@ import java.time.LocalDateTime;
 @Schema(name = "Usuario DTO", description = "Representa un usuario dentro del sistema")
 public class UsuarioDTO {
 
-    @Schema(description = "Identificador interno del usuario", example = "1", accessMode = Schema.AccessMode.READ_ONLY)
+    @Schema(description = "Identificador interno del usuario", example = "1")
     private Integer idUsuario;
 
-    @Schema(description = "Numero de documento", example = "37583561")
+    @Schema(description = "Numero de documento", example = "51671224")
     private String nroDocumento;
 
-    @Schema(description = "Primer nombre del usuario", example = "Juan")
+    @Schema(description = "Primer nombre del usuario", example = "Carlos")
     private String priNombre;
 
-    @Schema(description = "Segundo nombre del usuario", example = "Manuel")
+    @Schema(description = "Segundo nombre del usuario", example = "Leandro")
     private String segNombre;
 
-    @Schema(description = "Primer apellido del usuario", example = "Perez")
+    @Schema(description = "Primer apellido del usuario", example = "Melian")
     private String priApellido;
 
-    @Schema(description = "Segundo apellido del usuario", example = "Gonzalez")
+    @Schema(description = "Segundo apellido del usuario", example = "Lamas")
     private String segApellido;
 
-    @Schema(description = "Tipo de documento del usuario", example = "CI, Pasaporte, DNI u otro")
+    @Schema(description = "Tipo de documento del usuario", example = "CI")
     private String tipoDoc;
 
     @Schema(description = "Fecha de nacimiento del usuario", example = "31/12/2000")
@@ -76,10 +79,17 @@ public class UsuarioDTO {
     @Schema(description = "Identificador interno del perfil del usuario", example = "3")
     private Integer idPerfil;
 
+    @NotNull(message = "Elija su Rol")
+    @Schema(description = "Rol que elije el usuario")
+    private Integer id_rol;
+
     @Schema(accessMode = Schema.AccessMode.READ_ONLY) // para que Swagger no lo muestre ni lo permita modificar
     private String contrasenaHash;
 
-    @Schema(description = "Fecha de creación de el usuario", accessMode = Schema.AccessMode.READ_ONLY) //read only quiere decir que no tengo que pasar esos atribtos porque se generan automaticamente
+    @Schema(description = "Lista de teléfonos del usuario")
+    private List<TelefonoDTO> telefonos;
+
+    @Schema(description = "Fecha de creación de el usuario", accessMode = Schema.AccessMode.READ_ONLY)
     private LocalDateTime fecha_creacion;
 
     @Schema(description = "Fecha de actualización de el usuario", accessMode = Schema.AccessMode.READ_ONLY)

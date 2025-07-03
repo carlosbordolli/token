@@ -1,5 +1,6 @@
 package com.utec.pinfranow.jwt;
 
+import com.utec.pinfranow.model.Usuario;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -12,6 +13,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -25,7 +27,7 @@ public class JwtTokenUtil {
         this.secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
-    public String generateToken(UserDetails userDetails) {
+    /*public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("role", userDetails.getAuthorities());
         return Jwts.builder()
@@ -35,7 +37,7 @@ public class JwtTokenUtil {
                 .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY))
                 .signWith(secretKey)
                 .compact();
-    }
+    }*/
 
     public Boolean validateToken(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
@@ -58,8 +60,31 @@ public class JwtTokenUtil {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
+    public String generateTokenFromUsuario(Usuario usuario) {
+        Map<String, Object> claims = new HashMap<>();
 
-    private Claims extractAllClaims(String token) {
+        String role;
+
+        switch (usuario.getIdRol()) {
+            case 1 -> role = "ROLE_ADMIN";
+            case 2 -> role = "ROLE_AUXADMIN";
+            case 3 -> role = "ROLE_SOCIO";
+            case 4 -> role = "ROLE_NO_SOCIO";
+            default -> role = "ROLE_USER";
+        }
+
+        claims.put("role", List.of(role));
+
+        return Jwts.builder()
+                .setClaims(claims)
+                .setSubject(usuario.getEmail())
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY))
+                .signWith(secretKey)
+                .compact();
+    }
+
+    Claims extractAllClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(secretKey)
                 .build()

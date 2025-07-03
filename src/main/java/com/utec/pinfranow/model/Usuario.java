@@ -11,6 +11,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.LocalDateTime;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "usuarios")
@@ -80,6 +82,12 @@ public class Usuario {
 
     @Column(name = "id_ciudad", nullable = false)
     private Integer idCiudad;
+
+    @Column(name = "id_rol", nullable = false)
+    private Integer idRol;
+
+    @OneToMany(mappedBy = "id.usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Telefono> telefonos = new ArrayList<>();
 
     //columnas para auditoría
 

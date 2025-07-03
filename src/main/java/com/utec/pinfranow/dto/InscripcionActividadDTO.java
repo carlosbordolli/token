@@ -21,9 +21,9 @@ public class InscripcionActividadDTO {
     @NotNull(message = "El id de la actividad es obligatorio")
     private Integer idActividad;
 
-    @Schema(description = "Fecha de incripción de la actividad", example = "31/12/2024")
+    @Schema(description = "Fecha de incripción de la actividad", example = "31/12/2024", accessMode = Schema.AccessMode.READ_ONLY)
     private LocalDateTime fechaInscripcion;
 
-    @Schema(description = "La incripción fue cancelada?", example = "true")
+    @Schema(description = "La incripción fue cancelada?", example = "false")
     private Boolean cancelada;
 }

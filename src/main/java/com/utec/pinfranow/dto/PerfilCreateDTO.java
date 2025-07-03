@@ -11,7 +11,7 @@ public class PerfilCreateDTO {
     @Schema(description = "Nombre del perfil", example = "Invitado")
     private String nomPerfil;
 
-    @Schema(description = "Descripción del perfil", example = "Este perfil es para usuarios externos a la institución y tiene acceso restringido")
+    @Schema(description = "Descripción del perfil", example = "Este perfil es para invitados")
     private String desPerfil;
 
     @Schema(description = "Estado del perfil", example = "ACTIVO")
